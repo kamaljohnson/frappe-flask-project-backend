@@ -27,61 +27,61 @@ from app import app
 
 @app.route('/books/all')
 def get_all_books():
-    pass
+    return "API UNDER CONSTRUCTION"
 
 
 @app.route('/books/popular')
 def get_popular_books():
-    pass
+    return "API UNDER CONSTRUCTION"
 
 
 @app.route('/books/issued/<member_id>')
 def get_issued_books(member_id):
-    pass
+    return "API UNDER CONSTRUCTION"
 
 
 @app.route('/books/issued/all')
-def get_issued_books():
-    pass
+def get_all_issued_books():
+    return "API UNDER CONSTRUCTION"
 
 
 @app.route('/members/<member_id>/insight')
 def get_member_insight(member_id):
-    pass
+    return "API UNDER CONSTRUCTION"
 
 
 @app.route('/insight')
 def get_library_insight():
-    pass
+    return "API UNDER CONSTRUCTION"
 
 
 @app.route('/report')
 def get_report():
-    pass
+    return "API UNDER CONSTRUCTION"
 
 
 @app.route('/members/create_new')
 def create_member():
-    pass
+    return "API UNDER CONSTRUCTION"
 
 
 @app.route('/members/delete/<member_id>')
 def delete_member(member_id):
-    pass
+    return "API UNDER CONSTRUCTION"
 
 
 @app.route('/members/edit/<member_id>/')
 def edit_member(member_id):
-    pass
+    return "API UNDER CONSTRUCTION"
 
 
 @app.route('/transactions/issue_book')
 def issue_book():
-    pass
+    return "API UNDER CONSTRUCTION"
 
 
 @app.route('/transactions/return_book')
 def return_book():
-    pass
+    return "API UNDER CONSTRUCTION"
 
 
