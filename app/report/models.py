@@ -7,7 +7,7 @@ class Report(db.Model, SerializerMixin):
 
     id = db.Column(db.Integer, primary_key=True)
     date = db.Column(db.Date)
-    books_issued = db.Column(db.Integer)
+    books_issued = db.Column(db.Integer)    # TODO: use foreign key instead
     earnings = db.Column(db.Integer)
 
     def __repr__(self):

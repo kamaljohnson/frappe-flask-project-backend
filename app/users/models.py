@@ -19,7 +19,9 @@ class Member(User):
     id = db.Column(db.Integer, primary_key=True)
     unbilled = db.Column(db.Integer)
     total_paid = db.Column(db.Integer)
-    transactions = db.relationship('Transaction', backref='transactions', lazy='dynamic')
+
+    # back populates
+    transactions = db.relationship('Transaction', back_populates='member')
 
     """
         transactions: use to retrieve all the books issued/returned and details

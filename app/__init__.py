@@ -9,7 +9,7 @@ db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
 from app import routes
-from app.users import models, controllers
-from app.books import models, controllers
-from app.transactions import models, controllers
-from app.report import models, controllers
+# from app.users import models, controllers
+# from app.books import models, controllers
+# from app.transactions import models, controllers
+# from app.report import models, controllers

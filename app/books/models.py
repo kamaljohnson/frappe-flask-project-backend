@@ -11,19 +11,31 @@ class BookDetail(db.Model, SerializerMixin):
     author = db.Column(db.String(20))
     base_fees = db.Column(db.Integer)
     popularity = db.Column(db.Integer, index=True)
-    book_instances = db.relationship('Book', backref='instances', lazy='dynamic')
+    stock = db.Column(db.Integer)  # is updated when a book is issued / returned
+
+    # back populates
+    book_instances = db.relationship('BookInstance', back_populates='book_detail')
 
     def __repr__(self):
         return '<Book name: {}, author: {}, description: {} >'.format(self.name, self.author, self.description)
+
+    # TODO:
+    def get_book_stock(self):
+        pass
 
 
 class BookInstance(db.Model, SerializerMixin):
     __tablename__ = 'book_instance'
 
     id = db.Column(db.Integer, primary_key=True)
-    book_detail_id = db.Column(db.Integer, db.ForeignKey('book_detail.id'))
     is_available = db.Column(db.Boolean)
-    transactions = db.relationship('Transaction', backref='transactions', lazy='dynamic')
+
+    # foreign keys
+    book_detail_id = db.Column(db.Integer, db.ForeignKey('book_detail.id'))
+
+    # back populates
+    book_detail = db.relationship('BookDetail', back_populates='book_instances')
+    transactions = db.relationship('Transaction', back_populates='book_instance')
 
     """
     available: is the book available at the library,

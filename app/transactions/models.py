@@ -13,13 +13,19 @@ class Transaction(db.Model, SerializerMixin):
     __tablename__ = 'transaction'
 
     id = db.Column(db.Integer, primary_key=True)
-    book_instance_id = db.Column(db.Integer, db.ForeignKey('book_instance.id'))
-    member_id = db.Column(db.Integer, db.ForeignKey('member.id'))
     returned = db.Column(db.Boolean)
     issue_date = db.Column(db.DateTime, default=datetime.utcnow)
     due_date = db.Column(db.DateTime, default=None)
     return_date = db.Column(db.DateTime, default=None)
     fees = db.Column(db.Integer)
+
+    # foreign keys
+    member_id = db.Column(db.Integer, db.ForeignKey('member.id'))
+    book_instance_id = db.Column(db.Integer, db.ForeignKey('book_instance.id'))
+
+    # back populates
+    book_instance = db.relationship('BookInstance', back_populates='transactions')
+    member = db.relationship('Member', back_populates='transactions')
 
     def __repr__(self):
         return '<Transaction : {}, member_id: {}, returned: {}>'.format(self.name, self.author, self.description)

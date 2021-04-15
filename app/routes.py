@@ -1,4 +1,4 @@
-from app import app
+from app import app, books, users, transactions, report
 
 """
     Required routs
@@ -27,12 +27,12 @@ from app import app
 
 @app.route('/books/all')
 def get_all_books():
-    return "API UNDER CONSTRUCTION"
+    return books.controllers.get_popular_books()
 
 
 @app.route('/books/popular')
 def get_popular_books():
-    return "API UNDER CONSTRUCTION"
+    return books.controllers.get_popular_books()
 
 
 @app.route('/books/issued/<member_id>')
