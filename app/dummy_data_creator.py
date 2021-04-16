@@ -8,21 +8,26 @@ from app.transactions import Transaction
 
 fake = Faker()
 
-SAMPLE_USER_SIZE = 100
+# sample size config
+SAMPLE_MEMBER_SIZE = 100
+SAMPLE_LIBRARIAN_SIZE = 1
 SAMPLE_UNIQUE_BOOK_SIZE = 500
 SAMPLE_BOOK_INSTANCE_SIZE = 2000
+SAMPLE_TRANSACTION_SIZE = 500
 
 # print decorator config
 ON_COMPLETE_STR = "Done"
-STR_SPACING = 30
+STR_SPACING = 40
 
 
 # TODO: check if unique field elements are unique while setting
 def create_dummy_users():
-    print("creating dummy users".ljust(STR_SPACING, '.'), end="")
+    print("creating dummy users")
+
+    print("creating dummy members [{}]".format(SAMPLE_MEMBER_SIZE).ljust(STR_SPACING, '.'), end="")
 
     # creating member users
-    for i in range(0, SAMPLE_USER_SIZE):
+    for i in range(0, SAMPLE_MEMBER_SIZE):
         member = Member(
             username=fake.user_name(),
             email=fake.email(),
@@ -32,6 +37,10 @@ def create_dummy_users():
         )
         db.session.add(member)
         db.session.commit()
+
+    print(ON_COMPLETE_STR)
+
+    print("creating dummy members [{}]".format(SAMPLE_LIBRARIAN_SIZE).ljust(STR_SPACING, '.'), end="")
 
     # creating librarian user
     librarian = Librarian(
@@ -46,7 +55,9 @@ def create_dummy_users():
 
 
 def create_dummy_books():
-    print("creating dummy books".ljust(STR_SPACING, '.'), end="")
+    print("creating dummy books")
+
+    print("creating dummy books details [{}]".format(SAMPLE_UNIQUE_BOOK_SIZE).ljust(STR_SPACING, '.'), end="")
 
     # creating unique book details
     for i in range(0, SAMPLE_UNIQUE_BOOK_SIZE):
@@ -59,6 +70,10 @@ def create_dummy_books():
             stock=0  # will be updated once book instances are created
         )
         db.session.add(book_detail)
+
+    print(ON_COMPLETE_STR)
+
+    print("creating dummy books instances [{}]".format(SAMPLE_BOOK_INSTANCE_SIZE).ljust(STR_SPACING, '.'), end="")
 
     # creating book instance
     for i in range(0, SAMPLE_BOOK_INSTANCE_SIZE):
@@ -75,7 +90,7 @@ def create_dummy_books():
 
 # TODO create dummy transactions
 def create_dummy_transactions():
-    print("creating dummy transactions".ljust(STR_SPACING, '.'), end="")
+    print("creating dummy transactions [{}]".format(SAMPLE_TRANSACTION_SIZE).ljust(STR_SPACING, '.'), end="")
     print(ON_COMPLETE_STR)
 
 
