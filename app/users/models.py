@@ -1,8 +1,7 @@
 from app import db
-from sqlalchemy_serializer import SerializerMixin
 
 
-class User(db.Model, SerializerMixin):
+class User(db.Model):
     __abstract__ = True
 
     username = db.Column(db.String(20), unique=True)
@@ -29,7 +28,18 @@ class Member(User):
     """
 
     def __repr__(self):
-        return '<Member {}>'.format(User.query.get(self.user_id))
+        return '<Member {}>'.format(self.username)
+
+    def to_json(self):
+        json = {
+            'id': self.id,
+            'username': self.username,
+            'email': self.email,
+            'unbilled': self.unbilled,
+            'total_paid': self.total_paid,
+            'transactions': []          # TODO: retrieve this data
+        }
+        return json
 
     # TODO:
     def calculate_unbilled(self):
@@ -47,3 +57,11 @@ class Librarian(User):
 
     def __repr__(self):
         return '<Librarian {}>'.format(User.query.get(self.user_id))
+
+    def to_json(self):
+        json = {
+            'id': self.id,
+            'username': self.username,
+            'email': self.email
+        }
+        return json

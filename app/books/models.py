@@ -1,17 +1,16 @@
 from app import db
-from sqlalchemy_serializer import SerializerMixin
 
 
-class BookDetail(db.Model, SerializerMixin):
+class BookDetail(db.Model):
     __tablename__ = 'book_detail'
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(20), unique=True)
-    description = db.Column(db.String(500))
-    author = db.Column(db.String(20))
-    base_fees = db.Column(db.Integer)
-    popularity = db.Column(db.Integer, index=True)
-    stock = db.Column(db.Integer)  # is updated when a book is issued / returned
+    description = db.Column(db.String(500), nullable=False)
+    author = db.Column(db.String(20), nullable=False)
+    base_fees = db.Column(db.Integer, nullable=False)
+    popularity = db.Column(db.Integer, index=True, default=0)
+    stock = db.Column(db.Integer, default=0)  # is updated when a book is issued / returned
 
     # back populates
     book_instances = db.relationship('BookInstance', back_populates='book_detail')
@@ -19,12 +18,29 @@ class BookDetail(db.Model, SerializerMixin):
     def __repr__(self):
         return '<Book name: {}, author: {}, description: {} >'.format(self.name, self.author, self.description)
 
-    # TODO:
+    def to_json(self):
+        json = {
+            'id': self.id,
+            'name': self.name,
+            'description': self.description,
+            'author': self.author,
+            'base_fees': self.base_fees,
+            'popularity': self.popularity,
+            'stock': self.stock,
+            'book_instances': []        # TODO: retrieve this data
+        }
+        return json
+
+    # TODO: create the from json function
+    def from_json(self, json):
+        book = BookDetail()
+        return book
+
     def get_book_stock(self):
         pass
 
 
-class BookInstance(db.Model, SerializerMixin):
+class BookInstance(db.Model):
     __tablename__ = 'book_instance'
 
     id = db.Column(db.Integer, primary_key=True)
@@ -46,4 +62,14 @@ class BookInstance(db.Model, SerializerMixin):
     """
 
     def __repr__(self):
-        return '<Book name: {}, quantity: {}>'.format(BookDetail.query.get(self.book_detail_id).name, self.quantity_left)
+        return '<Book name: {}, quantity: {}>'.format(BookDetail.query.get(self.book_detail_id).name,
+                                                      self.quantity_left)
+
+    def to_json(self):
+        json = {
+            'id': self.id,
+            'is_available': self.is_available,
+            'book_detail_id': self.book_detail_id,
+            'transactions': []          # TODO: retrieve this data
+        }
+        return json
