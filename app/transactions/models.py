@@ -1,5 +1,4 @@
 from app import db
-from sqlalchemy_serializer import SerializerMixin
 from datetime import datetime, date
 from app.books.models import BookDetail
 
@@ -9,7 +8,7 @@ from app.books.models import BookDetail
 EXTRA_PER_DAY_FINE = 10
 
 
-class Transaction(db.Model, SerializerMixin):
+class Transaction(db.Model):
     __tablename__ = 'transaction'
 
     id = db.Column(db.Integer, primary_key=True)
@@ -29,6 +28,19 @@ class Transaction(db.Model, SerializerMixin):
 
     def __repr__(self):
         return '<Transaction : {}, member_id: {}, returned: {}>'.format(self.name, self.author, self.description)
+
+    def to_json(self):
+        json = {
+            'id': self.id,
+            'returned': self.returned,
+            'issue_date': self.issue_date,
+            'due_date': self.due_date,
+            'return_date': self.return_date,
+            'fees': self.fees,
+            'member_id': self.member_id,
+            'book_instance_id': self.book_instance_id
+        }
+        return json
 
     """
         calculate_fees(): calculates the dynamic fees
