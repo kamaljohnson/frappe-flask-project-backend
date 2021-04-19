@@ -31,8 +31,17 @@ class BookDetail(db.Model):
         }
         return json
 
+    @staticmethod
+    def to_json_many(book_list):
+        json_list = []
+        for book in book_list:
+            json_list.append(book.to_json())
+
+        return json_list
+
     # TODO: create the from json function
-    def from_json(self, json):
+    @staticmethod
+    def from_json(json):
         book = BookDetail()
         return book
 
