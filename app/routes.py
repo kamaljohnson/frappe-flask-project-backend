@@ -2,7 +2,7 @@ import json
 
 from flask import request
 
-from app import app, books, transactions
+from app import app, books, transactions, users
 
 """
     Required routs
@@ -31,70 +31,85 @@ from app import app, books, transactions
 
 
 # books apis
-@app.route('/books/all')
+@app.route('/books/all', methods=['GET'])
 def get_all_books():
     return books.controllers.get_all_books()
 
 
-@app.route('/books/<book_id>')
+@app.route('/books/<book_id>', methods=['GET'])
 def get_book(book_id):
     return books.controllers.get_book(book_id)
 
 
-@app.route('/books/popular')
+@app.route('/books/popular', methods=['GET'])
 def get_popular_books():
     return books.controllers.get_popular_books()
 
 
-@app.route('/books/issued/<member_id>')
+@app.route('/books/issued/<member_id>', methods=['GET'])
 def get_issued_books(member_id):
     return books.get_issued_books(member_id)
 
 
-@app.route('/books/issued/all')
+@app.route('/books/issued/all', methods=['GET'])
 def get_all_issued_books():
     return books.controllers.get_all_issued_books()
 
 
 # member apis
-@app.route('/members/all')
+@app.route('/members/all', methods=['GET'])
 def get_all_members():
-    return "API UNDER CONSTRUCTION"
+    return users.controllers.get_all_members()
 
 
-@app.route('/members/<member_id>/insight')
+@app.route('/members/<member_id>/insight', methods=['GET'])
 def get_member_insight(member_id):
     return "API UNDER CONSTRUCTION"
 
 
-@app.route('/members/create_new')
+@app.route('/members/create_new', methods=['POST'])
 def create_member():
-    return "API UNDER CONSTRUCTION"
+    member_details = json.loads(request.data)
+
+    username = member_details['username']
+    email = member_details['email']
+
+    return users.controllers.create_member(username, email)
 
 
 @app.route('/members/delete/<member_id>')
 def delete_member(member_id):
-    return "API UNDER CONSTRUCTION"
+    return users.controllers.delete_member(member_id)
 
 
-@app.route('/members/edit/<member_id>/')
+@app.route('/members/edit/<member_id>/', methods=['POST'])
 def edit_member(member_id):
-    return "API UNDER CONSTRUCTION"
+    edit_details = json.loads(request.data)
+
+    new_username = edit_details['username']
+    new_email = edit_details['email']
+
+    if new_username is None:
+        new_username = ''
+    if new_email is None:
+        new_email = ''
+
+    return users.controllers.edit_member(member_id, new_username, new_email)
 
 
-@app.route('/library/insight')
+@app.route('/library/insight', methods=['GET'])
 def get_library_insight():
     return "API UNDER CONSTRUCTION"
 
 
 # library apis
-@app.route('/library/report')
+@app.route('/library/report', methods=['GET'])
 def get_report():
     return "API UNDER CONSTRUCTION"
 
 
 # transaction apis
-@app.route('/transactions/all')
+@app.route('/transactions/all', methods=['GET'])
 def get_all_transactions():
     return transactions.controllers.get_all_transactions()
 
@@ -116,6 +131,6 @@ def return_book(book_instance_id):
 
 
 # analytics apis
-@app.route('/reports/all')
+@app.route('/reports/all', methods=['GET'])
 def get_all_report():
     return "API UNDER CONSTRUCTION"

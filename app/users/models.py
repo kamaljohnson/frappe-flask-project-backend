@@ -60,9 +60,18 @@ class Member(User):
         db.session.add(self)
         db.session.commit()
 
-    # TODO:
-    def update_total_paid(self, amount):
-        pass
+    def delete_member(self):
+        db.session.delete(self)
+        db.session.commit()
+
+    def edit_member(self, username='', email=''):
+        if username != '':
+            self.username = username
+        if email != '':
+            self.email = email
+
+        db.session.add(self)
+        db.session.commit()
 
 
 class Librarian(User):
