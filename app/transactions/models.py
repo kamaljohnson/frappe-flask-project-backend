@@ -75,6 +75,8 @@ class Transaction(db.Model):
         self.returned = True
         self.return_date = return_date
         self.calculate_fees()
-
         db.session.add(self)
         db.session.commit()
+
+        book_detail = BookDetail.query.get(self.book_instance.book_detail_id)
+        book_detail.update_popularity(self.fees)

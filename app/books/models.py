@@ -48,6 +48,11 @@ class BookDetail(db.Model):
     def get_book_stock(self):
         pass
 
+    def update_popularity(self, collected_fees):
+        self.popularity += collected_fees
+        db.session.add(self)
+        db.session.commit()
+
 
 class BookInstance(db.Model):
     __tablename__ = 'book_instance'
