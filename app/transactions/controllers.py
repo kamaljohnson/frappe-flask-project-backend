@@ -11,9 +11,13 @@ def get_all_transactions():
 
 def issue_book(book_instance_id, member_id, issue_period):
     transaction = Transaction()
-    transaction.issue_book(book_instance_id, member_id, issue_period)
+    issue_response = transaction.issue_book(book_instance_id, member_id, issue_period)
 
-    result = jsonify(transactoin=transaction.to_json())
+    if not issue_response["VALIDITY"]:
+        result = jsonify(error_msg=issue_response["ERROR_MSG"])
+    else:
+        result = jsonify(transaction=transaction.to_json())
+
     return result
 
 

@@ -72,9 +72,31 @@ class Transaction(db.Model):
             return self.fees
 
     def issue_book(self, book_instance_id, member_id, issue_period, issue_date=datetime.utcnow()):
+        # Doing checks to find if issue transaction is valid or not
+        # 1: parameter logic check
+        book_instance = BookInstance.query.get(book_instance_id)
+        member = Member.query.get(member_id)
+
+        if book_instance is None:
+            return {"VALIDITY": False, "ERROR_MSG": "Invalid book_instance_id, no such book_instance exist in database"}
+        if member is None:
+            return {"VALIDITY": False, "ERROR_MSG": "Invalid member_id, no such member exist in database"}
+        if issue_period <= 0:
+            return {"VALIDITY": False, "ERROR_MSG": "Invalid issue period, issue_period must be a non negative integer"}
+        if issue_date > datetime.utcnow():
+            return {"VALIDITY": False, "ERROR_MSG": "Invalid issue_date, issue_date must not be a future date"}
+
+        # 2: check if book_instance is available
+        if not book_instance.is_available:
+            return {"VALIDITY": False, "ERROR_MSG": "Book Unavailable, the book instance is already issued to a member"}
+
+        # 3: check if member unbilled < 500
+        if member.unbilled >= 500:
+            return {"VALIDITY": False, "ERROR_MSG": "Member max debt reached, member requires to return the books in order to issue new ones"}
+
         self.returned = False
-        self.member = Member.query.get(member_id)
-        self.book_instance = BookInstance.query.get(book_instance_id)
+        self.member = member
+        self.book_instance = book_instance
         self.issue_date = issue_date
         self.due_date = self.issue_date + timedelta(days=issue_period)
 
@@ -85,6 +107,8 @@ class Transaction(db.Model):
 
         book_detail = BookDetail.query.get(self.book_instance.book_detail_id)
         book_detail.update_stock(-1)
+
+        return {"VALIDITY": True}
 
     def return_book(self, return_date=datetime.utcnow()):
         self.returned = True
