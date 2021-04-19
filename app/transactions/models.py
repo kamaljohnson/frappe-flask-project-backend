@@ -57,23 +57,23 @@ class Transaction(db.Model):
 
     def calculate_fees(self):
         self.fees = BookDetail.query.get(self.book_instance.book_detail_id).base_fees
-        if self.due_date < datetime.utcnow():
-            extra_days = (date.today() - self.due_date.date()).days
+        if self.due_date < self.return_date:
+            extra_days = (self.return_date.date() - self.due_date.date()).days
             self.fees += extra_days * EXTRA_PER_DAY_FINE
 
-    def issue_book(self, book_instance_id, member_id, issue_period):
+    def issue_book(self, book_instance_id, member_id, issue_period, issue_date=datetime.utcnow()):
         self.returned = False
         self.member = Member.query.get(member_id)
         self.book_instance = BookInstance.query.get(book_instance_id)
-        self.issue_date = datetime.utcnow()
+        self.issue_date = issue_date
         self.due_date = self.issue_date + timedelta(days=issue_period)
 
         db.session.add(self)
         db.session.commit()
 
-    def return_book(self):
+    def return_book(self, return_date=datetime.utcnow()):
         self.returned = True
-        self.return_date = datetime.utcnow()
+        self.return_date = return_date
         self.calculate_fees()
 
         db.session.add(self)

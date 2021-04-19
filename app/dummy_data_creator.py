@@ -5,6 +5,7 @@ from app import db
 from app.users import Member, Librarian
 from app.books import BookDetail, BookInstance
 from app.transactions import Transaction
+from datetime import datetime, timedelta
 
 fake = Faker()
 
@@ -40,7 +41,7 @@ def create_dummy_users():
 
     print(ON_COMPLETE_STR)
 
-    print("creating dummy members [{}]".format(SAMPLE_LIBRARIAN_SIZE).ljust(STR_SPACING, '.'), end="")
+    print("creating dummy librarian [{}]".format(SAMPLE_LIBRARIAN_SIZE).ljust(STR_SPACING, '.'), end="")
 
     # creating librarian user
     librarian = Librarian(
@@ -91,6 +92,35 @@ def create_dummy_books():
 # TODO create dummy transactions
 def create_dummy_transactions():
     print("creating dummy transactions [{}]".format(SAMPLE_TRANSACTION_SIZE).ljust(STR_SPACING, '.'), end="")
+
+    members = Member.query.all()
+    book_instances = BookInstance.query.all()
+
+    list_of_issued_books = []
+    for i in range(SAMPLE_TRANSACTION_SIZE):
+        rnd = random.randrange(2)
+
+        rnd_member = members[random.randrange(SAMPLE_MEMBER_SIZE)]
+
+        while True:
+            rnd_book_instance = book_instances[random.randrange(SAMPLE_BOOK_INSTANCE_SIZE)]
+            if rnd_book_instance.id not in list_of_issued_books:
+                break
+
+        rnd_return_date = datetime.utcnow() - timedelta(days=random.randrange(0, 2000))
+        rnd_issue_date = rnd_return_date - timedelta(days=random.randrange(10, 100))
+
+        transaction = Transaction()
+        transaction.issue_book(rnd_book_instance.id, rnd_member.id, random.randrange(10, 60), issue_date=rnd_issue_date)
+        db.session.add(transaction)
+        db.session.commit()
+        if rnd == 0:        # return the books issued here
+            transaction.return_book(return_date=rnd_return_date)
+            db.session.add(transaction)
+            db.session.commit()
+        else:               # books issued are not returned yet
+            list_of_issued_books.append(rnd_book_instance.id)
+
     print(ON_COMPLETE_STR)
 
 
