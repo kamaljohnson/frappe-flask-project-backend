@@ -67,18 +67,27 @@ class Transaction(db.Model):
         self.issue_date = issue_date
         self.due_date = self.issue_date + timedelta(days=issue_period)
 
+        self.book_instance.is_available = False
+
         db.session.add(self)
         db.session.commit()
+
+        book_detail = BookDetail.query.get(self.book_instance.book_detail_id)
+        book_detail.update_stock(-1)
 
     def return_book(self, return_date=datetime.utcnow()):
         self.returned = True
         self.return_date = return_date
         self.calculate_fees()
+
+        self.book_instance.is_available = True
+
         db.session.add(self)
         db.session.commit()
 
         book_detail = BookDetail.query.get(self.book_instance.book_detail_id)
         book_detail.update_popularity(self.fees)
+        book_detail.update_stock(1)
 
 
 from app.books.models import BookDetail, BookInstance

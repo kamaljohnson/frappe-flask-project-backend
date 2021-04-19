@@ -45,8 +45,10 @@ class BookDetail(db.Model):
         book = BookDetail()
         return book
 
-    def get_book_stock(self):
-        pass
+    def update_stock(self, update_count):
+        self.stock += update_count
+        db.session.add(self)
+        db.session.commit()
 
     def update_popularity(self, collected_fees):
         self.popularity += collected_fees
@@ -58,7 +60,7 @@ class BookInstance(db.Model):
     __tablename__ = 'book_instance'
 
     id = db.Column(db.Integer, primary_key=True)
-    is_available = db.Column(db.Boolean)
+    is_available = db.Column(db.Boolean, default=True)
 
     # foreign keys
     book_detail_id = db.Column(db.Integer, db.ForeignKey('book_detail.id'))
@@ -95,6 +97,16 @@ class BookInstance(db.Model):
             json_list.append(book.to_json())
 
         return json_list
+
+    @staticmethod
+    def create_new(book_detail_id):
+        book_instance = BookInstance()
+        book_instance.book_detail_id = book_detail_id
+        db.session.add(book_instance)
+        db.session.commit()
+
+        book_detail = BookDetail.query.get(book_detail_id)
+        book_detail.update_stock(1)
 
 
 from app.transactions.models import Transaction

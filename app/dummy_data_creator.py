@@ -78,13 +78,8 @@ def create_dummy_books():
 
     # creating book instance
     for i in range(0, SAMPLE_BOOK_INSTANCE_SIZE):
-        book_instances = BookInstance(
-            is_available=True,  # will be updated when transactions are created
-            book_detail_id=random.randrange(1, SAMPLE_UNIQUE_BOOK_SIZE + 1)
-        )
-        db.session.add(book_instances)
-
-    db.session.commit()
+        book_detail_id = random.randrange(1, SAMPLE_UNIQUE_BOOK_SIZE + 1)
+        BookInstance.create_new(book_detail_id)
 
     print(ON_COMPLETE_STR)
 
