@@ -1,4 +1,3 @@
-from app.books.models import BookDetail
 from flask import jsonify
 
 POPULAR_BOOK_LIMIT_SIZE = 20
@@ -27,3 +26,34 @@ def get_popular_books():
 
     result = jsonify(popular_books=json_list)
     return result
+
+
+def get_all_issued_books():
+    issued_transactions = Transaction.query\
+        .filter_by(returned=False)
+    issued_books = []
+
+    for transaction in issued_transactions:
+        issued_book = transaction.book_instance
+        issued_books.append(issued_book)
+
+    result = jsonify(issued_books=BookInstance.to_json_many(issued_books))
+    return result
+
+
+def get_issued_books(member_id):
+    issued_transactions = Transaction.query\
+        .filter_by(member_id=member_id)\
+        .filter_by(returned=False)
+    issued_books = []
+
+    for transaction in issued_transactions:
+        issued_book = transaction.book_instance
+        issued_books.append(issued_book)
+
+    result = jsonify(issued_books=BookInstance.to_json_many(issued_books))
+    return result
+
+
+from app.transactions.models import Transaction
+from app.books.models import BookDetail, BookInstance

@@ -48,12 +48,12 @@ def get_popular_books():
 
 @app.route('/books/issued/<member_id>')
 def get_issued_books(member_id):
-    return "API UNDER CONSTRUCTION"
+    return books.get_issued_books(member_id)
 
 
 @app.route('/books/issued/all')
 def get_all_issued_books():
-    return "API UNDER CONSTRUCTION"
+    return books.controllers.get_all_issued_books()
 
 
 # member apis
