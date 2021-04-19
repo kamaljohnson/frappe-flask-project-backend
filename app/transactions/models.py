@@ -1,7 +1,5 @@
 from app import db
-from datetime import datetime, date, timedelta
-from app.books.models import BookDetail, BookInstance
-from app.users.models import Member
+from datetime import datetime, timedelta
 
 """
     the fine for each extra day after the due date
@@ -50,6 +48,7 @@ class Transaction(db.Model):
             json_list.append(transaction.to_json())
 
         return json_list
+
     """
         calculate_fees(): calculates the dynamic fees
         new_fees = base_fees + EXTRA_PER_DAY_FINE * extra_days
@@ -80,3 +79,7 @@ class Transaction(db.Model):
 
         book_detail = BookDetail.query.get(self.book_instance.book_detail_id)
         book_detail.update_popularity(self.fees)
+
+
+from app.books.models import BookDetail, BookInstance
+from app.users.models import Member

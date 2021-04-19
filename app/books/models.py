@@ -27,7 +27,7 @@ class BookDetail(db.Model):
             'base_fees': self.base_fees,
             'popularity': self.popularity,
             'stock': self.stock,
-            'book_instances': []        # TODO: retrieve this data
+            'book_instances': BookInstance.to_json_many(self.book_instances)
         }
         return json
 
@@ -84,6 +84,17 @@ class BookInstance(db.Model):
             'id': self.id,
             'is_available': self.is_available,
             'book_detail_id': self.book_detail_id,
-            'transactions': []          # TODO: retrieve this data
+            'transactions': Transaction.to_json_many(self.transactions)
         }
         return json
+
+    @staticmethod
+    def to_json_many(book_instance_list):
+        json_list = []
+        for book in book_instance_list:
+            json_list.append(book.to_json())
+
+        return json_list
+
+
+from app.transactions.models import Transaction
