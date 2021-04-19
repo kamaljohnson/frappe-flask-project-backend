@@ -10,11 +10,27 @@ from datetime import datetime, timedelta
 fake = Faker()
 
 # sample size config
-SAMPLE_MEMBER_SIZE = 100
+SAMPLE_MEMBER_SIZE = {
+    'small': 10,
+    'mid': 100,
+    'large': 500
+}
 SAMPLE_LIBRARIAN_SIZE = 1
-SAMPLE_UNIQUE_BOOK_SIZE = 500
-SAMPLE_BOOK_INSTANCE_SIZE = 2000
-SAMPLE_TRANSACTION_SIZE = 500
+SAMPLE_UNIQUE_BOOK_SIZE = {
+    'small': 5,
+    'mid': 200,
+    'large': 500
+}
+SAMPLE_BOOK_INSTANCE_SIZE = {
+    'small': 50,
+    'mid': 1000,
+    'large': 2000
+}
+SAMPLE_TRANSACTION_SIZE = {
+    'small': 10,
+    'mid': 100,
+    'large': 500
+}
 
 # print decorator config
 ON_COMPLETE_STR = "Done"
@@ -22,13 +38,13 @@ STR_SPACING = 40
 
 
 # TODO: check if unique field elements are unique while setting
-def create_dummy_users():
+def create_dummy_users(size):
     print("creating dummy users")
 
-    print("creating dummy members [{}]".format(SAMPLE_MEMBER_SIZE).ljust(STR_SPACING, '.'), end="")
+    print("creating dummy members [{}]".format(SAMPLE_MEMBER_SIZE[size]).ljust(STR_SPACING, '.'), end="")
 
     # creating member users
-    for i in range(0, SAMPLE_MEMBER_SIZE):
+    for i in range(0, SAMPLE_MEMBER_SIZE[size]):
         member = Member(
             username=fake.user_name(),
             email=fake.email(),
@@ -55,13 +71,13 @@ def create_dummy_users():
     print(ON_COMPLETE_STR)
 
 
-def create_dummy_books():
+def create_dummy_books(size):
     print("creating dummy books")
 
-    print("creating dummy books details [{}]".format(SAMPLE_UNIQUE_BOOK_SIZE).ljust(STR_SPACING, '.'), end="")
+    print("creating dummy books details [{}]".format(SAMPLE_UNIQUE_BOOK_SIZE[size]).ljust(STR_SPACING, '.'), end="")
 
     # creating unique book details
-    for i in range(0, SAMPLE_UNIQUE_BOOK_SIZE):
+    for i in range(0, SAMPLE_UNIQUE_BOOK_SIZE[size]):
         book_detail = BookDetail(
             name=fake.sentence(4),
             description=fake.sentence(10),
@@ -74,31 +90,31 @@ def create_dummy_books():
 
     print(ON_COMPLETE_STR)
 
-    print("creating dummy books instances [{}]".format(SAMPLE_BOOK_INSTANCE_SIZE).ljust(STR_SPACING, '.'), end="")
+    print("creating dummy books instances [{}]".format(SAMPLE_BOOK_INSTANCE_SIZE[size]).ljust(STR_SPACING, '.'), end="")
 
     # creating book instance
-    for i in range(0, SAMPLE_BOOK_INSTANCE_SIZE):
-        book_detail_id = random.randrange(1, SAMPLE_UNIQUE_BOOK_SIZE + 1)
+    for i in range(0, SAMPLE_BOOK_INSTANCE_SIZE[size]):
+        book_detail_id = random.randrange(1, SAMPLE_UNIQUE_BOOK_SIZE[size] + 1)
         BookInstance.create_new(book_detail_id)
 
     print(ON_COMPLETE_STR)
 
 
 # TODO: make the issue data
-def create_dummy_transactions():
-    print("creating dummy transactions [{}]".format(SAMPLE_TRANSACTION_SIZE).ljust(STR_SPACING, '.'), end="")
+def create_dummy_transactions(size):
+    print("creating dummy transactions [{}]".format(SAMPLE_TRANSACTION_SIZE[size]).ljust(STR_SPACING, '.'), end="")
 
     members = Member.query.all()
     book_instances = BookInstance.query.all()
 
     list_of_issued_books = []
-    for i in range(SAMPLE_TRANSACTION_SIZE):
+    for i in range(SAMPLE_TRANSACTION_SIZE[size]):
         rnd = random.randrange(2)
 
-        rnd_member = members[random.randrange(SAMPLE_MEMBER_SIZE)]
+        rnd_member = members[random.randrange(SAMPLE_MEMBER_SIZE[size])]
 
         while True:
-            rnd_book_instance = book_instances[random.randrange(SAMPLE_BOOK_INSTANCE_SIZE)]
+            rnd_book_instance = book_instances[random.randrange(SAMPLE_BOOK_INSTANCE_SIZE[size])]
             if rnd_book_instance.id not in list_of_issued_books:
                 break
 
@@ -131,11 +147,11 @@ def clear_data(session):
     session.commit()
 
 
-def add_dummy_data():
+def add_dummy_data(size):
     print("adding dummy data to the database")
 
     clear_data(db.session)
 
-    create_dummy_users()
-    create_dummy_books()
-    create_dummy_transactions()
+    create_dummy_users(size)
+    create_dummy_books(size)
+    create_dummy_transactions(size)
