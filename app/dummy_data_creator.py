@@ -33,7 +33,7 @@ SAMPLE_TRANSACTION_SIZE = {
 }
 
 # print decorator config
-ON_COMPLETE_STR = "Done"
+ON_COMPLETE_STR = "✅"
 STR_SPACING = 40
 
 
@@ -129,6 +129,7 @@ def create_dummy_transactions(size):
             rnd_issue_date = datetime.utcnow() - timedelta(days=random.randrange(0, 75))
             transaction.issue_book(rnd_book_instance.id, rnd_member.id, random.randrange(10, 60), issue_date=rnd_issue_date)
             list_of_issued_books.append(rnd_book_instance.id)
+            rnd_member.unbilled = transaction.calculate_fees()
 
         db.session.add(transaction)
         db.session.commit()

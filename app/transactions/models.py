@@ -117,6 +117,7 @@ class Transaction(db.Model):
 
         self.book_instance.is_available = True
         self.member.unbilled = 0
+        self.member.total_paid += self.fees
 
         db.session.add(self)
         db.session.commit()
