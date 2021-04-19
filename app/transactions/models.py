@@ -12,9 +12,9 @@ class Transaction(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     returned = db.Column(db.Boolean)
-    issue_date = db.Column(db.DateTime, default=datetime.utcnow)
-    due_date = db.Column(db.DateTime, default=None)
-    return_date = db.Column(db.DateTime, default=None)
+    issue_date = db.Column(db.Date, default=datetime.today().date())
+    due_date = db.Column(db.Date, default=None)
+    return_date = db.Column(db.Date, default=None)
     fees = db.Column(db.Integer)
 
     # foreign keys
@@ -57,12 +57,12 @@ class Transaction(db.Model):
     def calculate_fees(self):
         self.fees = BookDetail.query.get(self.book_instance.book_detail_id).base_fees
         if not self.returned:
-            period = (datetime.utcnow() - self.issue_date).days
+            period = (datetime.today().date() - self.issue_date).days
         else:
             period = (self.return_date - self.issue_date).days
 
         if self.issue_date + timedelta(days=period) > self.due_date:
-            extra_days = period - (self.issue_date.date() - self.due_date.date()).days
+            extra_days = period - (self.issue_date - self.due_date).days
             self.fees += extra_days * EXTRA_PER_DAY_FINE
 
         db.session.add(self)
@@ -71,7 +71,7 @@ class Transaction(db.Model):
         if not self.returned:
             return self.fees
 
-    def issue_book(self, book_instance_id, member_id, issue_period, issue_date=datetime.utcnow()):
+    def issue_book(self, book_instance_id, member_id, issue_period, issue_date=datetime.today().date()):
         # Doing checks to find if issue transaction is valid or not
         # 1: parameter logic check
         book_instance = BookInstance.query.get(book_instance_id)
@@ -83,7 +83,7 @@ class Transaction(db.Model):
             return {"VALIDITY": False, "ERROR_MSG": "Invalid member_id, no such member exist in database"}
         if issue_period <= 0:
             return {"VALIDITY": False, "ERROR_MSG": "Invalid issue period, issue_period must be a non negative integer"}
-        if issue_date > datetime.utcnow():
+        if issue_date > datetime.today().date():
             return {"VALIDITY": False, "ERROR_MSG": "Invalid issue_date, issue_date must not be a future date"}
 
         # 2: check if book_instance is available
@@ -98,7 +98,7 @@ class Transaction(db.Model):
         self.member = member
         self.book_instance = book_instance
         self.issue_date = issue_date
-        self.due_date = self.issue_date + timedelta(days=issue_period)
+        self.due_date = issue_date + timedelta(days=issue_period)
 
         self.book_instance.is_available = False
 
@@ -110,7 +110,7 @@ class Transaction(db.Model):
 
         return {"VALIDITY": True}
 
-    def return_book(self, return_date=datetime.utcnow()):
+    def return_book(self, return_date=datetime.today().date()):
         self.returned = True
         self.return_date = return_date
         self.calculate_fees()

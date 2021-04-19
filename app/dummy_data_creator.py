@@ -5,6 +5,7 @@ from app import db
 from app.users import Member, Librarian
 from app.books import BookDetail, BookInstance
 from app.transactions import Transaction
+from app.report import Report
 from datetime import datetime, timedelta
 
 fake = Faker()
@@ -23,13 +24,13 @@ SAMPLE_UNIQUE_BOOK_SIZE = {
 }
 SAMPLE_BOOK_INSTANCE_SIZE = {
     'small': 50,
-    'mid': 1000,
-    'large': 2000
+    'mid': 250,
+    'large': 500
 }
 SAMPLE_TRANSACTION_SIZE = {
-    'small': 10,
-    'mid': 100,
-    'large': 500
+    'small': 100,
+    'mid': 500,
+    'large': 1000
 }
 
 # print decorator config
@@ -120,19 +121,32 @@ def create_dummy_transactions(size):
 
         transaction = Transaction()
         if rnd == 0:  # return the books issued here
-            rnd_return_date = datetime.utcnow() - timedelta(days=random.randrange(0, 2000))
+            rnd_return_date = datetime.today().date() - timedelta(days=random.randrange(0, 183))
             rnd_issue_date = rnd_return_date - timedelta(days=random.randrange(10, 100))
 
             transaction.issue_book(rnd_book_instance.id, rnd_member.id, random.randrange(10, 60), issue_date=rnd_issue_date)
             transaction.return_book(return_date=rnd_return_date)
         else:  # books issued are not returned yet
-            rnd_issue_date = datetime.utcnow() - timedelta(days=random.randrange(0, 75))
+            rnd_issue_date = datetime.today().date() - timedelta(days=random.randrange(0, 75))
             transaction.issue_book(rnd_book_instance.id, rnd_member.id, random.randrange(10, 60), issue_date=rnd_issue_date)
             list_of_issued_books.append(rnd_book_instance.id)
             rnd_member.unbilled = transaction.calculate_fees()
 
         db.session.add(transaction)
         db.session.commit()
+
+    print(ON_COMPLETE_STR)
+
+
+def create_dummy_reports():
+    print("creating dummy reports ".ljust(STR_SPACING, '.'), end="")
+    # find the first issue
+    first_transaction = Transaction.query.order_by(Transaction.issue_date).limit(1)[0]
+    first_issue_date = first_transaction.issue_date
+    total_period = (datetime.today().date() - first_issue_date).days
+    for i in range(total_period):
+        report = Report()
+        report.create_report(date=first_issue_date + timedelta(days=i))
 
     print(ON_COMPLETE_STR)
 
@@ -156,3 +170,4 @@ def add_dummy_data(size):
     create_dummy_users(size)
     create_dummy_books(size)
     create_dummy_transactions(size)
+    create_dummy_reports()

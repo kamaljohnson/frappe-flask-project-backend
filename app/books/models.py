@@ -78,8 +78,7 @@ class BookInstance(db.Model):
     """
 
     def __repr__(self):
-        return '<Book name: {}, quantity: {}>'.format(BookDetail.query.get(self.book_detail_id).name,
-                                                      self.quantity_left)
+        return '<Book name: {}>'.format(BookDetail.query.get(self.book_detail_id).name)
 
     def to_json(self):
         json = {

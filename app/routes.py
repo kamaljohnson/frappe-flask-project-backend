@@ -1,8 +1,9 @@
+import datetime
 import json
 
 from flask import request
 
-from app import app, books, transactions, users
+from app import app, books, transactions, users, report
 
 """
     Required routs
@@ -102,12 +103,6 @@ def get_library_insight():
     return "API UNDER CONSTRUCTION"
 
 
-# library apis
-@app.route('/library/report', methods=['GET'])
-def get_report():
-    return "API UNDER CONSTRUCTION"
-
-
 # transaction apis
 @app.route('/transactions/all', methods=['GET'])
 def get_all_transactions():
@@ -131,6 +126,15 @@ def return_book(book_instance_id):
 
 
 # analytics apis
-@app.route('/reports/all', methods=['GET'])
-def get_all_report():
-    return "API UNDER CONSTRUCTION"
+@app.route('/library/reports/all', methods=['GET'])
+def get_all_reports():
+    return report.controllers.get_all_reports()
+
+
+@app.route('/library/report', methods=['GET'])
+def get_report():
+    body = json.loads(request.data)
+
+    date_str = body['date']
+    date = datetime.datetime.strptime(date_str, "%Y-%m-%d")
+    return report.get_report(date.date())

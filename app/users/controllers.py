@@ -40,4 +40,12 @@ def edit_member(member_id, username='', email=''):
     return result
 
 
+def get_member_insight(member_id):
+    pass
+
+
+def get_library_insight():
+    pass
+
+
 from app.users.models import Member
