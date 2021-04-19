@@ -1,6 +1,7 @@
 from app import db
-from datetime import datetime, date
-from app.books.models import BookDetail
+from datetime import datetime, date, timedelta
+from app.books.models import BookDetail, BookInstance
+from app.users.models import Member
 
 """
     the fine for each extra day after the due date
@@ -42,21 +43,38 @@ class Transaction(db.Model):
         }
         return json
 
+    @staticmethod
+    def to_json_many(transaction_list):
+        json_list = []
+        for transaction in transaction_list:
+            json_list.append(transaction.to_json())
+
+        return json_list
     """
         calculate_fees(): calculates the dynamic fees
         new_fees = base_fees + EXTRA_PER_DAY_FINE * extra_days
     """
 
     def calculate_fees(self):
-        self.fees = BookDetail.query.get(self.book_id).base_fees
-        if self.due_date > datetime.utcnow():
+        self.fees = BookDetail.query.get(self.book_instance.book_detail_id).base_fees
+        if self.due_date < datetime.utcnow():
             extra_days = (date.today() - self.due_date.date()).days
             self.fees += extra_days * EXTRA_PER_DAY_FINE
 
-    # TODO:
-    def issue_book(self, member_id, book_id):
-        pass
+    def issue_book(self, book_instance_id, member_id, issue_period):
+        self.returned = False
+        self.member = Member.query.get(member_id)
+        self.book_instance = BookInstance.query.get(book_instance_id)
+        self.issue_date = datetime.utcnow()
+        self.due_date = self.issue_date + timedelta(days=issue_period)
 
-    # TODO:
-    def return_book(self, book_id):
-        pass
+        db.session.add(self)
+        db.session.commit()
+
+    def return_book(self):
+        self.returned = True
+        self.return_date = datetime.utcnow()
+        self.calculate_fees()
+
+        db.session.add(self)
+        db.session.commit()
