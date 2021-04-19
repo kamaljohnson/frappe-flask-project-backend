@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 """
     the fine for each extra day after the due date
 """
-EXTRA_PER_DAY_FINE = 10
+EXTRA_PER_DAY_FINE = 2
 
 
 class Transaction(db.Model):
@@ -56,9 +56,20 @@ class Transaction(db.Model):
 
     def calculate_fees(self):
         self.fees = BookDetail.query.get(self.book_instance.book_detail_id).base_fees
-        if self.due_date < self.return_date:
-            extra_days = (self.return_date.date() - self.due_date.date()).days
+        if not self.returned:
+            period = (datetime.utcnow() - self.issue_date).days
+        else:
+            period = (self.return_date - self.issue_date).days
+
+        if self.issue_date + timedelta(days=period) > self.due_date:
+            extra_days = period - (self.issue_date.date() - self.due_date.date()).days
             self.fees += extra_days * EXTRA_PER_DAY_FINE
+
+        db.session.add(self)
+        db.session.commit()
+
+        if not self.returned:
+            return self.fees
 
     def issue_book(self, book_instance_id, member_id, issue_period, issue_date=datetime.utcnow()):
         self.returned = False
@@ -81,6 +92,7 @@ class Transaction(db.Model):
         self.calculate_fees()
 
         self.book_instance.is_available = True
+        self.member.unbilled = 0
 
         db.session.add(self)
         db.session.commit()

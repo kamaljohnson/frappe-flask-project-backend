@@ -33,8 +33,8 @@ def create_dummy_users():
             username=fake.user_name(),
             email=fake.email(),
             password_hash=fake.random_number(8),
-            unbilled=fake.random_int(0, 500),
-            total_paid=fake.random_int(0, 5000)
+            unbilled=0,
+            total_paid=0
         )
         db.session.add(member)
         db.session.commit()
@@ -84,7 +84,7 @@ def create_dummy_books():
     print(ON_COMPLETE_STR)
 
 
-# TODO create dummy transactions
+# TODO: make the issue data
 def create_dummy_transactions():
     print("creating dummy transactions [{}]".format(SAMPLE_TRANSACTION_SIZE).ljust(STR_SPACING, '.'), end="")
 
@@ -102,19 +102,20 @@ def create_dummy_transactions():
             if rnd_book_instance.id not in list_of_issued_books:
                 break
 
-        rnd_return_date = datetime.utcnow() - timedelta(days=random.randrange(0, 2000))
-        rnd_issue_date = rnd_return_date - timedelta(days=random.randrange(10, 100))
-
         transaction = Transaction()
-        transaction.issue_book(rnd_book_instance.id, rnd_member.id, random.randrange(10, 60), issue_date=rnd_issue_date)
+        if rnd == 0:  # return the books issued here
+            rnd_return_date = datetime.utcnow() - timedelta(days=random.randrange(0, 2000))
+            rnd_issue_date = rnd_return_date - timedelta(days=random.randrange(10, 100))
+
+            transaction.issue_book(rnd_book_instance.id, rnd_member.id, random.randrange(10, 60), issue_date=rnd_issue_date)
+            transaction.return_book(return_date=rnd_return_date)
+        else:  # books issued are not returned yet
+            rnd_issue_date = datetime.utcnow() - timedelta(days=random.randrange(0, 75))
+            transaction.issue_book(rnd_book_instance.id, rnd_member.id, random.randrange(10, 60), issue_date=rnd_issue_date)
+            list_of_issued_books.append(rnd_book_instance.id)
+
         db.session.add(transaction)
         db.session.commit()
-        if rnd == 0:        # return the books issued here
-            transaction.return_book(return_date=rnd_return_date)
-            db.session.add(transaction)
-            db.session.commit()
-        else:               # books issued are not returned yet
-            list_of_issued_books.append(rnd_book_instance.id)
 
     print(ON_COMPLETE_STR)
 
