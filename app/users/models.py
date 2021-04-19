@@ -37,13 +37,28 @@ class Member(User):
             'email': self.email,
             'unbilled': self.unbilled,
             'total_paid': self.total_paid,
-            'transactions': []          # TODO: retrieve this data
+            'transactions': Transaction.to_json_many(self.transactions)
         }
         return json
 
-    # TODO:
+    @staticmethod
+    def to_json_many(member_list):
+        json_list = []
+        for member in member_list:
+            json_list.append(member.to_json())
+
+        return json_list
+
     def calculate_unbilled(self):
-        pass
+        issued_transactions = Transaction.query \
+            .filter_by(member_id=self.id) \
+            .filter_by(returned=False)
+        unbilled = 0
+        for transaction in issued_transactions:
+            unbilled += transaction.calculate_fees()
+        self.unbilled = unbilled
+        db.session.add(self)
+        db.session.commit()
 
     # TODO:
     def update_total_paid(self, amount):
@@ -65,3 +80,6 @@ class Librarian(User):
             'email': self.email
         }
         return json
+
+
+from app.transactions.models import Transaction
