@@ -73,11 +73,6 @@ def edit_member(member_id):
     return users.controllers.edit_member(member_id, new_username, new_email)
 
 
-@app.route('/library/insight', methods=['GET'])
-def get_library_insight():
-    return "API UNDER CONSTRUCTION"
-
-
 # transaction apis
 @app.route('/transactions/all', methods=['GET'])
 def get_all_transactions():
