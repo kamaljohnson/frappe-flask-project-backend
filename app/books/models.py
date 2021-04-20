@@ -41,12 +41,6 @@ class BookDetail(db.Model):
 
         return json_list
 
-    # TODO: create the from json function
-    @staticmethod
-    def from_json(json):
-        book = BookDetail()
-        return book
-
     def update_stock(self, update_count):
         self.stock += update_count
         db.session.add(self)

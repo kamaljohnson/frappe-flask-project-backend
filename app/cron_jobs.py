@@ -1,4 +1,4 @@
-from app import app, scheduler
+from app import scheduler
 
 
 @scheduler.task('interval', id='calculate_member_unbilled', hours=24, misfire_grace_time=900)

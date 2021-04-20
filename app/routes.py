@@ -5,31 +5,6 @@ from flask import request
 
 from app import app, books, transactions, users, report
 
-"""
-    Required routs
-    
-    - [GET] books/all
-    - [GET] books/<book_id>
-    - [GET] books/popular
-    - [GET] books/issued/<member_id>
-    - [GET] books/issued/all
-    
-    - [GET] members/popular
-    
-    - [GET] member/<member_id>/insight
-    - [GET] /insight                        :library insight
-    
-    - [GET] report/                         :start_data till end_date
-                                             specified in api call
-    
-    - [POST] members/create_new
-    - [POST] members/delete/<member_id>
-    - [POST] members/edit/<member_id>
-    
-    - [POST] transaction/issue_book
-    - [POST] transaction/return_book
-"""
-
 
 # books apis
 @app.route('/books/all', methods=['GET'])
