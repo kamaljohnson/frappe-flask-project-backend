@@ -63,9 +63,9 @@ def get_all_members():
     return users.controllers.get_all_members()
 
 
-@app.route('/members/<member_id>/insight', methods=['GET'])
-def get_member_insight(member_id):
-    return "API UNDER CONSTRUCTION"
+@app.route('/member/<member_id>', methods=['GET'])
+def get_member(member_id):
+    return users.controllers.get_member(member_id)
 
 
 @app.route('/members/create_new', methods=['POST'])
@@ -135,6 +135,9 @@ def get_all_reports():
 def get_report():
     body = json.loads(request.data)
 
-    date_str = body['date']
-    date = datetime.datetime.strptime(date_str, "%Y-%m-%d")
-    return report.get_report(date.date())
+    from_date_str = body['from_date']
+    till_date_str = body['till_date']
+
+    from_date = datetime.datetime.strptime(from_date_str, "%Y-%m-%d").date()
+    till_date = datetime.datetime.strptime(till_date_str, "%Y-%m-%d").date()
+    return report.get_report(from_date, till_date)
