@@ -83,6 +83,7 @@ def create_dummy_books(size):
             name=fake.sentence(4),
             description=fake.sentence(10),
             author=fake.name(),
+            img_src="https://picsum.photos/id/{}/200/300".format(i),
             base_fees=fake.random_int(10, 50),
             popularity=0,  # will be updated once transactions are created
             stock=0  # will be updated once book instances are created

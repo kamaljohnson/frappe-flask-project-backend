@@ -8,6 +8,7 @@ class BookDetail(db.Model):
     name = db.Column(db.String(20), unique=True)
     description = db.Column(db.String(500), nullable=False)
     author = db.Column(db.String(20), nullable=False)
+    img_src = db.Column(db.String(120))
     base_fees = db.Column(db.Integer, nullable=False)
     popularity = db.Column(db.Integer, index=True, default=0)
     stock = db.Column(db.Integer, default=0)  # is updated when a book is issued / returned
@@ -24,6 +25,7 @@ class BookDetail(db.Model):
             'name': self.name,
             'description': self.description,
             'author': self.author,
+            'img_src': self.img_src,
             'base_fees': self.base_fees,
             'popularity': self.popularity,
             'stock': self.stock,
