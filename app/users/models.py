@@ -16,8 +16,9 @@ class Member(User):
     __tablename__ = 'member'
 
     id = db.Column(db.Integer, primary_key=True)
-    unbilled = db.Column(db.Integer)
-    total_paid = db.Column(db.Integer)
+    unbilled = db.Column(db.Integer, default=0)
+    total_paid = db.Column(db.Integer, default=0)
+    books_taken = db.Column(db.Integer, default=0)
 
     # back populates
     transactions = db.relationship('Transaction', back_populates='member')
@@ -37,6 +38,7 @@ class Member(User):
             'email': self.email,
             'unbilled': self.unbilled,
             'total_paid': self.total_paid,
+            'books_taken': self.books_taken,
             'transactions': Transaction.to_json_many(self.transactions)
         }
         return json

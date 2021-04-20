@@ -10,6 +10,14 @@ def get_all_members():
     return result
 
 
+def get_member(member_id):
+    member = Member.query.get(member_id)
+    json = member.to_json()
+
+    result = jsonify(member=json)
+    return result
+
+
 def create_member(username, email):
     member = Member()
     member.username = username
@@ -38,14 +46,6 @@ def edit_member(member_id, username='', email=''):
     json = member.to_json()
     result = jsonify(member=json)
     return result
-
-
-def get_member_insight(member_id):
-    pass
-
-
-def get_library_insight():
-    pass
 
 
 from app.users.models import Member

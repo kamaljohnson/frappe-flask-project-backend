@@ -102,6 +102,8 @@ class Transaction(db.Model):
 
         self.book_instance.is_available = False
 
+        self.member.books_taken += 1
+
         db.session.add(self)
         db.session.commit()
 
