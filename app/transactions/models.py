@@ -78,21 +78,21 @@ class Transaction(db.Model):
         member = Member.query.get(member_id)
 
         if book_instance is None:
-            return {"VALIDITY": False, "ERROR_MSG": "Invalid book_instance_id, no such book_instance exist in database"}
+            return {"validity": False, "err_msg": 'book_instance does not exist'}
         if member is None:
-            return {"VALIDITY": False, "ERROR_MSG": "Invalid member_id, no such member exist in database"}
+            return {"validity": False, "err_msg": 'member does not exist'}
         if issue_period <= 0:
-            return {"VALIDITY": False, "ERROR_MSG": "Invalid issue period, issue_period must be a non negative integer"}
+            return {"validity": False, "err_msg": 'invalid issue_period'}
         if issue_date > datetime.today().date():
-            return {"VALIDITY": False, "ERROR_MSG": "Invalid issue_date, issue_date must not be a future date"}
+            return {"validity": False, "err_msg": 'invalid issue_date'}
 
         # 2: check if book_instance is available
         if not book_instance.is_available:
-            return {"VALIDITY": False, "ERROR_MSG": "Book Unavailable, the book instance is already issued to a member"}
+            return {"validity": False, "err_msg": "book unavailable"}
 
         # 3: check if member unbilled < 500
         if member.unbilled >= 500:
-            return {"VALIDITY": False, "ERROR_MSG": "Member max debt reached, member requires to return the books in order to issue new ones"}
+            return {"validity": False, "err_msg": "max debt reached"}
 
         self.returned = False
         self.member = member
@@ -110,7 +110,7 @@ class Transaction(db.Model):
         book_detail = BookDetail.query.get(self.book_instance.book_detail_id)
         book_detail.update_stock(-1)
 
-        return {"VALIDITY": True}
+        return {"validity": True}
 
     def return_book(self, return_date=datetime.today().date()):
         self.returned = True

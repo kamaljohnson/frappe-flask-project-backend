@@ -11,6 +11,10 @@ def get_all_members():
 
 
 def get_member(member_id):
+    # Handle edge cases [ invalid member_id ]
+    if Member.query.get(member_id) is None:
+        return jsonify(err_msg='invalid member_id')
+
     member = Member.query.get(member_id)
     json = member.to_json()
 
@@ -32,7 +36,13 @@ def create_member(username, email):
 
 
 def delete_member(member_id):
+    if int(member_id) < 0:
+        return jsonify(err_msg="invalid member_id")
+
     member = Member.query.get(member_id)
+    if member is None:
+        return jsonify(err_msg="member does not exist")
+
     member.delete_member()
 
     result = jsonify(msg="deleted member successfully")

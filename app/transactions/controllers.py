@@ -13,8 +13,8 @@ def issue_book(book_instance_id, member_id, issue_period):
     transaction = Transaction()
     issue_response = transaction.issue_book(book_instance_id, member_id, issue_period)
 
-    if not issue_response["VALIDITY"]:
-        result = jsonify(error_msg=issue_response["ERROR_MSG"])
+    if not issue_response["validity"]:
+        result = jsonify(err_msg=issue_response["err_msg"])
     else:
         result = jsonify(transaction=transaction.to_json())
 
@@ -24,7 +24,11 @@ def issue_book(book_instance_id, member_id, issue_period):
 def return_book(book_instance_id):
     transaction = Transaction.query \
         .filter_by(book_instance_id=book_instance_id) \
-        .filter_by(returned=False).limit(1).all()[0]
+        .filter_by(returned=False).first()
+
+    if transaction is None:
+        return jsonify(err_msg='book_instance not issued')
+
     transaction.return_book()
 
     result = jsonify(transaction=transaction.to_json())
