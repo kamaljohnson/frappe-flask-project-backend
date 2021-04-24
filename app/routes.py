@@ -132,8 +132,6 @@ def get_all_reports():
 def get_report():
     request_details = json.loads(request.data)
 
-    print(request_details)
-
     if 'from_date' not in request_details or\
             'till_date' not in request_details:
         return jsonify(err_msg='empty fields')
