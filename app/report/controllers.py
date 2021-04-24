@@ -14,7 +14,7 @@ def get_report(from_date, till_date):
         .filter(Report.date >= from_date)\
         .filter(Report.date <= till_date).all()
     if len(reports) <= 0:
-        return jsonify(msg="Report not yet generated")
+        return jsonify(msg="report not generated")
 
     earnings = 0
     books_issued = 0

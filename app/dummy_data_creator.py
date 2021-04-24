@@ -12,7 +12,7 @@ fake = Faker()
 
 # sample size config
 SAMPLE_MEMBER_SIZE = {
-    'small': 10,
+    'small': 3,
     'mid': 100,
     'large': 500
 }
@@ -28,7 +28,7 @@ SAMPLE_BOOK_INSTANCE_SIZE = {
     'large': 500
 }
 SAMPLE_TRANSACTION_SIZE = {
-    'small': 100,
+    'small': 2,
     'mid': 500,
     'large': 1000
 }
@@ -37,12 +37,14 @@ SAMPLE_TRANSACTION_SIZE = {
 ON_COMPLETE_STR = "✅"
 STR_SPACING = 40
 
+SHOW_PRINT = True
+
 
 # TODO: check if unique field elements are unique while setting
 def create_dummy_users(size):
-    print("creating dummy users")
+    if SHOW_PRINT: print("creating dummy users")
 
-    print("creating dummy members [{}]".format(SAMPLE_MEMBER_SIZE[size]).ljust(STR_SPACING, '.'), end="")
+    if SHOW_PRINT: print("creating dummy members [{}]".format(SAMPLE_MEMBER_SIZE[size]).ljust(STR_SPACING, '.'), end="")
 
     # creating member users
     for i in range(0, SAMPLE_MEMBER_SIZE[size]):
@@ -56,9 +58,9 @@ def create_dummy_users(size):
         db.session.add(member)
         db.session.commit()
 
-    print(ON_COMPLETE_STR)
+    if SHOW_PRINT: print(ON_COMPLETE_STR)
 
-    print("creating dummy librarian [{}]".format(SAMPLE_LIBRARIAN_SIZE).ljust(STR_SPACING, '.'), end="")
+    if SHOW_PRINT: print("creating dummy librarian [{}]".format(SAMPLE_LIBRARIAN_SIZE).ljust(STR_SPACING, '.'), end="")
 
     # creating librarian user
     librarian = Librarian(
@@ -69,13 +71,14 @@ def create_dummy_users(size):
     db.session.add(librarian)
     db.session.commit()
 
-    print(ON_COMPLETE_STR)
+    if SHOW_PRINT: print(ON_COMPLETE_STR)
 
 
 def create_dummy_books(size):
-    print("creating dummy books")
+    if SHOW_PRINT: print("creating dummy books")
 
-    print("creating dummy books details [{}]".format(SAMPLE_UNIQUE_BOOK_SIZE[size]).ljust(STR_SPACING, '.'), end="")
+    if SHOW_PRINT: print(
+        "creating dummy books details [{}]".format(SAMPLE_UNIQUE_BOOK_SIZE[size]).ljust(STR_SPACING, '.'), end="")
 
     # creating unique book details
     for i in range(0, SAMPLE_UNIQUE_BOOK_SIZE[size]):
@@ -89,22 +92,25 @@ def create_dummy_books(size):
             stock=0  # will be updated once book instances are created
         )
         db.session.add(book_detail)
+        db.session.commit()
 
-    print(ON_COMPLETE_STR)
+    if SHOW_PRINT: print(ON_COMPLETE_STR)
 
-    print("creating dummy books instances [{}]".format(SAMPLE_BOOK_INSTANCE_SIZE[size]).ljust(STR_SPACING, '.'), end="")
+    if SHOW_PRINT: print(
+        "creating dummy books instances [{}]".format(SAMPLE_BOOK_INSTANCE_SIZE[size]).ljust(STR_SPACING, '.'), end="")
 
     # creating book instance
     for i in range(0, SAMPLE_BOOK_INSTANCE_SIZE[size]):
         book_detail_id = random.randrange(1, SAMPLE_UNIQUE_BOOK_SIZE[size] + 1)
         BookInstance.create_new(book_detail_id)
 
-    print(ON_COMPLETE_STR)
+    if SHOW_PRINT: print(ON_COMPLETE_STR)
 
 
 # TODO: make the issue data
 def create_dummy_transactions(size):
-    print("creating dummy transactions [{}]".format(SAMPLE_TRANSACTION_SIZE[size]).ljust(STR_SPACING, '.'), end="")
+    if SHOW_PRINT: print(
+        "creating dummy transactions [{}]".format(SAMPLE_TRANSACTION_SIZE[size]).ljust(STR_SPACING, '.'), end="")
 
     members = Member.query.all()
     book_instances = BookInstance.query.all()
@@ -125,22 +131,24 @@ def create_dummy_transactions(size):
             rnd_return_date = datetime.today().date() - timedelta(days=random.randrange(0, 183))
             rnd_issue_date = rnd_return_date - timedelta(days=random.randrange(10, 100))
 
-            transaction.issue_book(rnd_book_instance.id, rnd_member.id, random.randrange(10, 60), issue_date=rnd_issue_date)
+            transaction.issue_book(rnd_book_instance.id, rnd_member.id, random.randrange(10, 60),
+                                   issue_date=rnd_issue_date)
             transaction.return_book(return_date=rnd_return_date)
         else:  # books issued are not returned yet
             rnd_issue_date = datetime.today().date() - timedelta(days=random.randrange(0, 75))
-            transaction.issue_book(rnd_book_instance.id, rnd_member.id, random.randrange(10, 60), issue_date=rnd_issue_date)
+            transaction.issue_book(rnd_book_instance.id, rnd_member.id, random.randrange(10, 60),
+                                   issue_date=rnd_issue_date)
             list_of_issued_books.append(rnd_book_instance.id)
             rnd_member.unbilled = transaction.calculate_fees()
 
         db.session.add(transaction)
         db.session.commit()
 
-    print(ON_COMPLETE_STR)
+    if SHOW_PRINT: print(ON_COMPLETE_STR)
 
 
 def create_dummy_reports():
-    print("creating dummy reports ".ljust(STR_SPACING, '.'), end="")
+    if SHOW_PRINT: print("creating dummy reports ".ljust(STR_SPACING, '.'), end="")
     # find the first issue
     first_transaction = Transaction.query.order_by(Transaction.issue_date).limit(1)[0]
     first_issue_date = first_transaction.issue_date
@@ -149,22 +157,26 @@ def create_dummy_reports():
         report = Report()
         report.create_report(date=first_issue_date + timedelta(days=i))
 
-    print(ON_COMPLETE_STR)
+    if SHOW_PRINT: print(ON_COMPLETE_STR)
 
 
 def clear_data(session):
-    print("cleaning tables")
+    if SHOW_PRINT: print("cleaning tables")
 
     meta = db.metadata
     for table in reversed(meta.sorted_tables):
-        print("deleting {}".format(table.name).ljust(STR_SPACING, '.'), end="")
+        if SHOW_PRINT: print("deleting {}".format(table.name).ljust(STR_SPACING, '.'), end="")
         session.execute(table.delete())
-        print(ON_COMPLETE_STR)
+        if SHOW_PRINT: print(ON_COMPLETE_STR)
     session.commit()
 
 
-def add_dummy_data(size):
-    print("adding dummy data to the database")
+def add_dummy_data(size, show_print=True):
+    global SHOW_PRINT
+
+    SHOW_PRINT = show_print
+
+    if SHOW_PRINT: print("adding dummy data to the database")
 
     clear_data(db.session)
 

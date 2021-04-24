@@ -1,7 +1,7 @@
 import datetime
 import json
 
-from flask import request
+from flask import request, jsonify
 
 from app import app, books, transactions, users, report
 
@@ -38,14 +38,26 @@ def get_all_members():
     return users.controllers.get_all_members()
 
 
-@app.route('/member/<member_id>', methods=['GET'])
+@app.route('/members/<member_id>', methods=['GET'])
 def get_member(member_id):
     return users.controllers.get_member(member_id)
 
 
-@app.route('/members/create_new', methods=['POST'])
+@app.route('/members/create', methods=['POST'])
 def create_member():
     member_details = json.loads(request.data)
+
+    if 'username' not in member_details or \
+            'email' not in member_details:
+        return jsonify(err_msg='insufficient info')
+
+    if type(member_details['username']) != str or \
+            type(member_details['email']) != str:
+        return jsonify(err_msg='invalid info type')
+
+    if member_details['username'] == '' or \
+            member_details['email'] == '':
+        return jsonify(err_msg='invalid member info')
 
     username = member_details['username']
     email = member_details['email']
@@ -58,17 +70,27 @@ def delete_member(member_id):
     return users.controllers.delete_member(member_id)
 
 
-@app.route('/members/edit/<member_id>/', methods=['POST'])
+@app.route('/members/edit/<member_id>', methods=['POST'])
 def edit_member(member_id):
     edit_details = json.loads(request.data)
 
-    new_username = edit_details['username']
-    new_email = edit_details['email']
-
-    if new_username is None:
+    if 'username' not in edit_details:
         new_username = ''
-    if new_email is None:
+    else:
+        new_username = edit_details['username']
+
+    if 'email' not in edit_details:
         new_email = ''
+    else:
+        new_email = edit_details['email']
+
+    if type(new_username) != str or\
+            type(new_email) != str:
+        return jsonify(err_msg="invalid type")
+
+    if new_username == '' and \
+            new_email == '':
+        return jsonify(err_msg="empty fields")
 
     return users.controllers.edit_member(member_id, new_username, new_email)
 
@@ -82,6 +104,11 @@ def get_all_transactions():
 @app.route('/transactions/issue_book', methods=['POST'])
 def issue_book():
     issue_details = json.loads(request.data)
+
+    if 'book_instance_id' not in issue_details or\
+            'member_id' not in issue_details or\
+            'issue_period' not in issue_details:
+        return jsonify(err_msg='empty fields')
 
     book_instance_id = issue_details['book_instance_id']
     member_id = issue_details['member_id']
@@ -103,10 +130,16 @@ def get_all_reports():
 
 @app.route('/library/report', methods=['GET'])
 def get_report():
-    body = json.loads(request.data)
+    request_details = json.loads(request.data)
 
-    from_date_str = body['from_date']
-    till_date_str = body['till_date']
+    print(request_details)
+
+    if 'from_date' not in request_details or\
+            'till_date' not in request_details:
+        return jsonify(err_msg='empty fields')
+
+    from_date_str = request_details['from_date']
+    till_date_str = request_details['till_date']
 
     from_date = datetime.datetime.strptime(from_date_str, "%Y-%m-%d").date()
     till_date = datetime.datetime.strptime(till_date_str, "%Y-%m-%d").date()
