@@ -230,7 +230,7 @@
 
 ### Request
 
-`POST` request to `/members/create_new`
+`POST` request to `/members/create`
 
 ```json
 {
