@@ -5,6 +5,7 @@ import click
 from flask.cli import with_appcontext
 from flask_sqlalchemy import SQLAlchemy
 from flask_apscheduler import APScheduler
+from flask_cors import CORS
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -13,6 +14,7 @@ migrate = Migrate(app, db)
 scheduler = APScheduler()
 scheduler.init_app(app)
 scheduler.start()
+CORS(app)
 
 from . import routes
 from .dummy_data_creator import *

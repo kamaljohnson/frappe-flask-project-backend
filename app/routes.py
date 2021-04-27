@@ -1,6 +1,6 @@
 import datetime
 import json
-
+from flask_cors import cross_origin
 from flask import request, jsonify
 
 from app import app, books, transactions, users, report
@@ -8,6 +8,7 @@ from app import app, books, transactions, users, report
 
 # books apis
 @app.route('/books/all', methods=['GET'])
+@cross_origin()
 def get_all_books():
     return books.controllers.get_all_books()
 
