@@ -19,7 +19,7 @@ class BookDetail(db.Model):
     def __repr__(self):
         return '<Book name: {}, author: {}, description: {} >'.format(self.name, self.author, self.description)
 
-    def to_json(self):
+    def to_json(self, simple=True):
         json = {
             'id': self.id,
             'name': self.name,
@@ -29,15 +29,17 @@ class BookDetail(db.Model):
             'base_fees': self.base_fees,
             'popularity': self.popularity,
             'stock': self.stock,
-            'book_instances': BookInstance.to_json_many(self.book_instances)
         }
+        if not simple:
+            json['book_instances'] = BookInstance.to_json_many(self.book_instances)
+
         return json
 
     @staticmethod
-    def to_json_many(book_list):
+    def to_json_many(book_list, simple=True):
         json_list = []
         for book in book_list:
-            json_list.append(book.to_json())
+            json_list.append(book.to_json(simple))
 
         return json_list
 
@@ -76,20 +78,23 @@ class BookInstance(db.Model):
     def __repr__(self):
         return '<Book name: {}>'.format(BookDetail.query.get(self.book_detail_id).name)
 
-    def to_json(self):
+    def to_json(self, simple=True):
         json = {
             'id': self.id,
             'is_available': self.is_available,
             'book_detail_id': self.book_detail_id,
             'transactions': Transaction.to_json_many(self.transactions)
         }
+        if not simple:
+            json['book_detail'] = self.book_detail.to_json(simple=True)
+
         return json
 
     @staticmethod
-    def to_json_many(book_instance_list):
+    def to_json_many(book_instance_list, simple=True):
         json_list = []
         for book in book_instance_list:
-            json_list.append(book.to_json())
+            json_list.append(book.to_json(simple))
 
         return json_list
 

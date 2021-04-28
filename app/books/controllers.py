@@ -1,11 +1,12 @@
 from flask import jsonify
+from sqlalchemy import desc
 
 POPULAR_BOOK_LIMIT_SIZE = 20
 
 
 def get_all_books():
     books = BookDetail.query.all()
-    json_list = BookDetail.to_json_many(books)
+    json_list = BookDetail.to_json_many(books, simple=False)
 
     result = jsonify(books=json_list)
     return result
@@ -36,14 +37,16 @@ def get_popular_books():
 
 def get_all_issued_books():
     issued_transactions = Transaction.query\
-        .filter_by(returned=False)
+        .filter_by(returned=False)\
+        .order_by(desc(Transaction.issue_date))
+
     issued_books = []
 
     for transaction in issued_transactions:
         issued_book = transaction.book_instance
         issued_books.append(issued_book)
 
-    result = jsonify(issued_books=BookInstance.to_json_many(issued_books))
+    result = jsonify(issued_books=BookInstance.to_json_many(issued_books, simple=False))
     return result
 
 
