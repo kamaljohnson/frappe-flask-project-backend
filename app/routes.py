@@ -39,6 +39,11 @@ def get_all_members():
     return users.controllers.get_all_members()
 
 
+@app.route('/members/profitable', methods=['GET'])
+def get_profitable_members():
+    return users.controllers.get_profitable_members()
+
+
 @app.route('/members/<member_id>', methods=['GET'])
 def get_member(member_id):
     return users.controllers.get_member(member_id)

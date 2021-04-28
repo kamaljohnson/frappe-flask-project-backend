@@ -1,9 +1,19 @@
 from flask import jsonify
 from app import db
+from sqlalchemy import desc
 
 
 def get_all_members():
     members = Member.query.all()
+    json_list = Member.to_json_many(members)
+
+    result = jsonify(members=json_list)
+    return result
+
+
+def get_profitable_members():
+    members = Member.query \
+        .order_by(desc(Member.total_paid + Member.unbilled))
     json_list = Member.to_json_many(members)
 
     result = jsonify(members=json_list)
