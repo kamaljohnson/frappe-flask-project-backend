@@ -85,7 +85,7 @@ def edit_member(member_id):
     else:
         new_email = edit_details['email']
 
-    if type(new_username) != str or\
+    if type(new_username) != str or \
             type(new_email) != str:
         return jsonify(err_msg="invalid type")
 
@@ -94,6 +94,11 @@ def edit_member(member_id):
         return jsonify(err_msg="empty fields")
 
     return users.controllers.edit_member(member_id, new_username, new_email)
+
+
+@app.route('/members/<member_id>/insight', methods=['GET'])
+def get_member_insight(member_id):
+    pass
 
 
 # transaction apis
@@ -106,8 +111,8 @@ def get_all_transactions():
 def issue_book():
     issue_details = json.loads(request.data)
 
-    if 'book_instance_id' not in issue_details or\
-            'member_id' not in issue_details or\
+    if 'book_instance_id' not in issue_details or \
+            'member_id' not in issue_details or \
             'issue_period' not in issue_details:
         return jsonify(err_msg='empty fields')
 
@@ -133,7 +138,7 @@ def get_all_reports():
 def get_report():
     request_details = json.loads(request.data)
 
-    if 'from_date' not in request_details or\
+    if 'from_date' not in request_details or \
             'till_date' not in request_details:
         return jsonify(err_msg='empty fields')
 
@@ -143,3 +148,8 @@ def get_report():
     from_date = datetime.datetime.strptime(from_date_str, "%Y-%m-%d").date()
     till_date = datetime.datetime.strptime(till_date_str, "%Y-%m-%d").date()
     return report.get_report(from_date, till_date)
+
+
+@app.route('/library/insight', methods=['GET'])
+def get_library_insight():
+    return report.get_library_insight()
