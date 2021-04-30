@@ -51,6 +51,7 @@ def create_dummy_users(size):
         member = Member(
             username=fake.user_name(),
             email=fake.email(),
+            profile_pic="https://i.pravatar.cc/150?img={}".format(random.randrange(0, 71)),
             password_hash=fake.random_number(8),
             unbilled=0,
             total_paid=0
@@ -66,6 +67,7 @@ def create_dummy_users(size):
     librarian = Librarian(
         username=fake.user_name(),
         email=fake.company_email(),
+        profile_pic="https://i.pravatar.cc/150?img={}".format(random.randrange(0, 71)),
         password_hash=fake.random_number(8),
     )
     db.session.add(librarian)

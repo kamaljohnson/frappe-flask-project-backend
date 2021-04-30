@@ -6,6 +6,7 @@ class User(db.Model):
 
     username = db.Column(db.String(20), unique=True)
     email = db.Column(db.String(200), unique=True)
+    profile_pic = db.Column(db.String(200))
     password_hash = db.Column(db.String(128))
 
     def __repr__(self):
@@ -36,6 +37,7 @@ class Member(User):
             'id': self.id,
             'username': self.username,
             'email': self.email,
+            'profile_pic': self.profile_pic,
             'unbilled': self.unbilled,
             'total_paid': self.total_paid,
             'books_taken': self.books_taken,
