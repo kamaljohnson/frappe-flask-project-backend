@@ -25,6 +25,19 @@ def get_book(book_id):
     return result
 
 
+def get_book_instance(book_instance_id):
+    if int(book_instance_id) < 0:
+        return jsonify(err_msg="invalid book_id")
+    if BookInstance.query.get(book_instance_id) is None:
+        return jsonify(err_msg='book instance does not exist')
+
+    book = BookInstance.query.get(book_instance_id)
+
+    json = book.to_json(simple=False)
+    result = jsonify(book_instance=json)
+    return result
+
+
 def get_popular_books():
     popular_books = BookDetail \
         .query.order_by(BookDetail.popularity.desc()) \
@@ -36,8 +49,8 @@ def get_popular_books():
 
 
 def get_all_issued_books():
-    issued_transactions = Transaction.query\
-        .filter_by(returned=False)\
+    issued_transactions = Transaction.query \
+        .filter_by(returned=False) \
         .order_by(desc(Transaction.issue_date))
 
     issued_books = []
@@ -54,8 +67,8 @@ def get_issued_books(member_id):
     if Member.query.get(member_id) is None:
         return jsonify(err_msg='invalid member_id')
 
-    issued_transactions = Transaction.query\
-        .filter_by(member_id=member_id)\
+    issued_transactions = Transaction.query \
+        .filter_by(member_id=member_id) \
         .filter_by(returned=False)
     issued_books = []
 

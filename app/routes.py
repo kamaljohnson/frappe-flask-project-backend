@@ -18,6 +18,11 @@ def get_book(book_id):
     return books.controllers.get_book(book_id)
 
 
+@app.route('/books/instances/<book_instance_id>', methods=['GET'])
+def get_book_instance(book_instance_id):
+    return books.controllers.get_book_instance(book_instance_id)
+
+
 @app.route('/books/popular', methods=['GET'])
 def get_popular_books():
     return books.controllers.get_popular_books()
