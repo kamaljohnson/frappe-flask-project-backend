@@ -63,6 +63,22 @@ def get_all_issued_books():
     return result
 
 
+def get_limit_issued_books(limit):
+    issued_transactions = Transaction.query \
+        .filter_by(returned=False) \
+        .order_by(desc(Transaction.issue_date)) \
+        .limit(limit)
+
+    issued_books = []
+
+    for transaction in issued_transactions:
+        issued_book = transaction.book_instance
+        issued_books.append(issued_book)
+
+    result = jsonify(issued_books=BookInstance.to_json_many(issued_books, simple=False))
+    return result
+
+
 def get_issued_books(member_id):
     if Member.query.get(member_id) is None:
         return jsonify(err_msg='invalid member_id')

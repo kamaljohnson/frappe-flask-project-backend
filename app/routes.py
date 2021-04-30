@@ -38,6 +38,11 @@ def get_all_issued_books():
     return books.controllers.get_all_issued_books()
 
 
+@app.route('/books/issued/limit/<limit>', methods=['GET'])
+def get_limit_issued_books(limit):
+    return books.controllers.get_limit_issued_books(limit)
+
+
 # member apis
 @app.route('/members/all', methods=['GET'])
 def get_all_members():
