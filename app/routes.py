@@ -134,7 +134,13 @@ def return_book(book_instance_id):
 
 
 # analytics apis
-@app.route('/library/reports/all', methods=['GET'])
+@app.route('/library/reports/all/<days>', methods=['GET'])
+def get_all_reports_days(days):
+    days = int(days)
+    return report.controllers.get_all_reports(limited=True, days=days)
+
+
+@app.route('/library/reports/all/', methods=['GET'])
 def get_all_reports():
     return report.controllers.get_all_reports()
 

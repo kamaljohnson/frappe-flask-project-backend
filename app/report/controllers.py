@@ -1,8 +1,15 @@
 from flask import jsonify
+from sqlalchemy import desc
 
 
-def get_all_reports():
-    reports = Report.query.all()
+def get_all_reports(limited=False, days=-1):
+    if not limited:
+        reports = Report.query.order_by(desc(Report.date)).all()
+    else:
+        if days < 0:
+            return jsonify(msg="invalid days input")
+        reports = Report.query.order_by(desc(Report.date)).limit(days)
+
     json_list = Report.to_json_many(reports)
 
     result = jsonify(reports=json_list)
