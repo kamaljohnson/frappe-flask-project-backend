@@ -28,7 +28,10 @@ class Transaction(db.Model):
     def __repr__(self):
         return '<Transaction : {}, member_id: {}, returned: {}>'.format(self.name, self.author, self.description)
 
-    def to_json(self):
+    def to_json(self, calculate_fees=False):
+        if calculate_fees:
+            self.calculate_fees()
+
         json = {
             'id': self.id,
             'returned': self.returned,
@@ -42,10 +45,10 @@ class Transaction(db.Model):
         return json
 
     @staticmethod
-    def to_json_many(transaction_list):
+    def to_json_many(transaction_list, calculate_fees=False):
         json_list = []
         for transaction in transaction_list:
-            json_list.append(transaction.to_json())
+            json_list.append(transaction.to_json(calculate_fees))
 
         return json_list
 

@@ -26,7 +26,7 @@ def get_member(member_id):
         return jsonify(err_msg='invalid member_id')
 
     member = Member.query.get(member_id)
-    json = member.to_json()
+    json = member.to_json(calculate_unbilled=True)
 
     result = jsonify(member=json)
     return result

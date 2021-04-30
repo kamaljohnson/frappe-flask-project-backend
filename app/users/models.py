@@ -32,7 +32,13 @@ class Member(User):
     def __repr__(self):
         return '<Member {}>'.format(self.username)
 
-    def to_json(self):
+    def to_json(self, calculate_unbilled=False):
+        calculate_fees = False
+
+        if calculate_unbilled:
+            self.calculate_unbilled()
+            calculate_fees = True
+
         json = {
             'id': self.id,
             'username': self.username,
@@ -41,15 +47,15 @@ class Member(User):
             'unbilled': self.unbilled,
             'total_paid': self.total_paid,
             'books_taken': self.books_taken,
-            'transactions': Transaction.to_json_many(self.transactions)
+            'transactions': Transaction.to_json_many(self.transactions, calculate_fees)
         }
         return json
 
     @staticmethod
-    def to_json_many(member_list):
+    def to_json_many(member_list, calculate_unbilled=False):
         json_list = []
         for member in member_list:
-            json_list.append(member.to_json())
+            json_list.append(member.to_json(calculate_unbilled))
 
         return json_list
 
