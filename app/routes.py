@@ -43,6 +43,51 @@ def get_limit_issued_books(limit):
     return books.controllers.get_limit_issued_books(limit)
 
 
+@app.route('/books/create/', methods=['POST'])
+def create_book():
+    book_detail = json.loads(request.data)
+
+    name = book_detail['name']
+    author = book_detail['author']
+    description = book_detail['description']
+    base_fees = book_detail['base_fees']
+
+    return books.controllers.create_book(
+        name=name,
+        author=author,
+        description=description,
+        base_fees=base_fees
+    )
+
+
+@app.route('/books/update/<book_id>', methods=['POST'])
+def update_book(book_id):
+    book_detail = json.loads(request.data)
+
+    name = book_detail['name']
+    author = book_detail['author']
+    description = book_detail['description']
+    base_fees = book_detail['base_fees']
+
+    return books.controllers.update_book(
+        book_id=book_id,
+        name=name,
+        author=author,
+        description=description,
+        base_fees=base_fees
+    )
+
+
+@app.route('/books/delete/<book_id>', methods=['GET'])
+def delete_book(book_id):
+    return books.controllers.delete_book(book_id)
+
+
+@app.route('/books/add/<book_id>', methods=['GET'])
+def add_book_instance(book_id):
+    return books.controllers.add_book_instance(book_id)
+
+
 # member apis
 @app.route('/members/all', methods=['GET'])
 def get_all_members():

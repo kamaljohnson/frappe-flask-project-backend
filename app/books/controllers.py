@@ -49,9 +49,9 @@ def get_popular_books():
 
 
 def get_all_issued_books():
-    issued_transactions = Transaction.query \
+    issued_transactions = app.transactions.models.Transaction.query \
         .filter_by(returned=False) \
-        .order_by(desc(Transaction.issue_date))
+        .order_by(desc(app.transactions.models.Transaction.issue_date))
 
     issued_books = []
 
@@ -64,9 +64,9 @@ def get_all_issued_books():
 
 
 def get_limit_issued_books(limit):
-    issued_transactions = Transaction.query \
+    issued_transactions = app.transactions.models.Transaction.query \
         .filter_by(returned=False) \
-        .order_by(desc(Transaction.issue_date)) \
+        .order_by(desc(app.transactions.models.Transaction.issue_date)) \
         .limit(limit)
 
     issued_books = []
@@ -83,7 +83,7 @@ def get_issued_books(member_id):
     if Member.query.get(member_id) is None:
         return jsonify(err_msg='invalid member_id')
 
-    issued_transactions = Transaction.query \
+    issued_transactions = app.transactions.models.Transaction.query \
         .filter_by(member_id=member_id) \
         .filter_by(returned=False)
     issued_books = []
@@ -96,6 +96,51 @@ def get_issued_books(member_id):
     return result
 
 
-from app.transactions.models import Transaction
+def create_book(name, author, description, base_fees):
+    new_book = BookDetail()
+    new_book.name = name
+    new_book.author = author
+    new_book.description = description
+    new_book.base_fees = base_fees
+
+    db.session.add(new_book)
+    db.session.commit()
+
+    result = jsonify(book_detail=new_book.to_json())
+    return result
+
+
+def update_book(book_id, name, author, description, base_fees):
+    book = BookDetail.query.get(book_id)
+    book.name = name
+    book.author = author
+    book.description = description
+    book.base_fees = base_fees
+
+    db.session.add(book)
+    db.session.commit()
+
+    result = jsonify(book_detail=book.to_json())
+    return result
+
+
+def delete_book(book_id):
+    book = BookDetail.query.get(book_id)
+
+    book.delete_book()
+
+    result = jsonify(msg='deleted book successfully')
+    return result
+
+
+def add_book_instance(book_id):
+    book_instance = BookInstance.create_new(book_id)
+
+    result = jsonify(book_instance=book_instance.to_json())
+    return result
+
+
+import app.transactions.models
 from app.books.models import BookDetail, BookInstance
 from app.users.models import Member
+from app import db

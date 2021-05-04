@@ -53,6 +53,10 @@ class BookDetail(db.Model):
         db.session.add(self)
         db.session.commit()
 
+    def delete_book(self):
+        db.session.delete(self)
+        db.session.commit()
+
 
 class BookInstance(db.Model):
     __tablename__ = 'book_instance'
@@ -107,6 +111,8 @@ class BookInstance(db.Model):
 
         book_detail = BookDetail.query.get(book_detail_id)
         book_detail.update_stock(1)
+
+        return book_instance
 
 
 from app.transactions.models import Transaction
