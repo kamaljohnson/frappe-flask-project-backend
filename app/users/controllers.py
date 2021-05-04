@@ -1,3 +1,5 @@
+import random
+
 from flask import jsonify
 from app import db
 from sqlalchemy import desc
@@ -36,6 +38,7 @@ def create_member(username, email):
     member = Member()
     member.username = username
     member.email = email
+    member.profile_pic = "https://i.pravatar.cc/150?img={}".format(random.randrange(0, 71))
 
     db.session.add(member)
     db.session.commit()
