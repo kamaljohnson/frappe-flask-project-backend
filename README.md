@@ -1,3 +1,15 @@
+# Documentation
+
+## DummyData
+
+Command: `manage.py dummy <size>` or `flask dummy-data <size>`
+
+`size : [small, mid, large]`
+
+Generating dummy data will take some time.
+
+💡 Pro-tip: Use size = small while develpment 
+
 # API Documentation
 
 ## `API URL | https://blooming-basin-03878.herokuapp.com/`
