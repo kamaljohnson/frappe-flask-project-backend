@@ -133,4 +133,4 @@ dmypy.json
 .idea
 
 #Database
-app.db
+#app.db
