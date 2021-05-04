@@ -60,7 +60,7 @@ def create_book():
     )
 
 
-@app.route('/books/update/<book_id>', methods=['POST'])
+@app.route('/books/edit/<book_id>', methods=['POST'])
 def update_book(book_id):
     book_detail = json.loads(request.data)
 
