@@ -161,6 +161,29 @@ def get_member_insight(member_id):
     pass
 
 
+# search
+@app.route('/search', methods=['POST'])
+def get_search_results():
+    search_details = json.loads(request.data)
+
+    if 'search_key_word' not in search_details or \
+            'filters' not in search_details:
+        return jsonify(err_msg='empty fields')
+
+    key_word = search_details['search_key_word']
+    filters = search_details['filters']
+
+    result = []
+
+    if 'books' in filters:
+        result.append(books.controllers.search(key_word))
+
+    if 'members' in filters:
+        result.append(users.controllers.search(key_word))
+
+    return jsonify(result=result)
+
+
 # transaction apis
 @app.route('/transactions/all', methods=['GET'])
 def get_all_transactions():

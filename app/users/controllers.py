@@ -71,4 +71,8 @@ def edit_member(member_id, username='', email=''):
     return result
 
 
+def search(key_word):
+    return jsonify(members='temp result')
+
+
 from app.users.models import Member

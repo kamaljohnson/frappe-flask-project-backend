@@ -139,6 +139,9 @@ def add_book_instance(book_id):
     result = jsonify(book_instance=book_instance.to_json())
     return result
 
+def search(key_word):
+    return jsonify(books='temp result')
+
 
 import app.transactions.models
 from app.books.models import BookDetail, BookInstance
