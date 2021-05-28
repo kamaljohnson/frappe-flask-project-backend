@@ -139,8 +139,10 @@ def add_book_instance(book_id):
     result = jsonify(book_instance=book_instance.to_json())
     return result
 
-def search(key_word):
-    return jsonify(books='temp result')
+
+def search(key_word) -> object:
+    books = BookDetail.query.filter(BookDetail.name.contains(key_word))
+    return BookDetail.to_json_many(books)
 
 
 import app.transactions.models

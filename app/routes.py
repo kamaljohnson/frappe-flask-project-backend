@@ -166,20 +166,20 @@ def get_member_insight(member_id):
 def get_search_results():
     search_details = json.loads(request.data)
 
-    if 'search_key_word' not in search_details or \
+    if 'search_word' not in search_details or \
             'filters' not in search_details:
         return jsonify(err_msg='empty fields')
 
-    key_word = search_details['search_key_word']
+    key_word = search_details['search_word']
     filters = search_details['filters']
 
-    result = []
+    result = {}
 
-    if 'books' in filters:
-        result.append(books.controllers.search(key_word))
+    if filters['books']:
+        result['books'] = books.controllers.search(key_word)
 
-    if 'members' in filters:
-        result.append(users.controllers.search(key_word))
+    if filters['members']:
+        result['members'] = users.controllers.search(key_word)
 
     return jsonify(result=result)
 
